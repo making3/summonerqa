@@ -1,0 +1,13 @@
+{% if comments %}
+    <ul>
+        {% for comment in comments %}
+            <li>
+                <a href="/comments/{{ comment.id }}/">
+                    {{ comment.body }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No comments found</p>
+{% endif %}

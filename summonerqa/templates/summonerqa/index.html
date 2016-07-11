@@ -1,0 +1,51 @@
+{% extends 'summonerqa/base.html' %}
+
+{% block content %}
+    {% load staticfiles %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'app.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-tagsinput.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'typeahead.css' %}" />
+    <script type="text/javascript" src="{% static 'bootstrap-tagsinput.js' %}"></script>
+    <script type="text/javascript" src="{% static 'typeahead.js' %}"></script>
+
+    <script type="text/javascript">
+        var tags = {{tags|safe}};
+        $(function() {
+            $('#tagsinput').tagsinput({
+                typeaheadjs: {
+                    name: 'tags',
+                    source: substringMatcher(tags)
+                }
+            });
+
+            $('#tagsinput').on('beforeItemAdd', function(event) {
+                event.cancel = tags.indexOf(event.item) === -1;
+            });
+        });
+
+        var substringMatcher = function(strs) {
+            return function findMatches(q, cb) {
+                // an array that will be populated with substring matches
+                var matches = [];
+
+                // regex used to determine if a string contains the substring `q`
+                var substringRegex = new RegExp(q, 'i');
+
+                // iterate through the pool of strings and for any string that
+                // contains the substring `q`, add it to the `matches` array
+                $.each(strs, function(i, str) {
+                    if (substringRegex.test(str)) {
+                        matches.push(str);
+                    }
+                });
+
+                cb(matches);
+            };
+        };
+    </script>
+
+    <h3>Questions</h3>
+    <input type="text" class="form-control tagsinput" id="tagsinput" placeholder="Enter tags here..." />
+
+{% endblock %}
